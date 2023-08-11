@@ -2,25 +2,24 @@ package com.example.demo.resourceProvider;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
-import ca.uhn.fhir.parser.StrictErrorHandler;
 import ca.uhn.fhir.rest.annotation.*;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
-import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import ca.uhn.fhir.validation.FhirValidator;
 import ca.uhn.fhir.validation.IValidatorModule;
-import ca.uhn.fhir.validation.ValidationResult;
 import com.example.demo.entity.PatientEntity;
 import com.example.demo.service.PatientService;
-import org.aspectj.weaver.tools.UnsupportedPointcutPrimitiveException;
 import org.hl7.fhir.common.hapi.validation.validator.FhirInstanceValidator;
 import org.hl7.fhir.r4.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -95,7 +94,6 @@ public class PatientResourceProvider implements IResourceProvider {
         MethodOutcome methodOutcome = new MethodOutcome();
         PatientEntity patient1 = patientService.createPatient(patient);
 
-
         methodOutcome.setResource(patient);
         methodOutcome.setCreated(true);
         methodOutcome.setResponseStatusCode(201);
@@ -104,4 +102,34 @@ public class PatientResourceProvider implements IResourceProvider {
     }
 
 
+    @Search
+    public List<Patient> getPatientByNameAndRRN(
+            @RequiredParam(name = Patient.SP_NAME) StringParam theFamilyName,
+            @RequiredParam(name = Patient.SP_IDENTIFIER) StringParam stringParam
+    ) {
+        Optional<PatientEntity> patientEntity = patientService.searchPatientByNameAndRRN(theFamilyName.getValue(), stringParam.getValue());
+
+        ArrayList<Patient> patients = new ArrayList<Patient>();
+
+        Patient patient = new Patient();
+        patient.setId(patientEntity.get().getId().toString());
+        patient.setGender(
+                patientEntity.get().getGender().equals("MALE") ? Enumerations.AdministrativeGender.MALE : Enumerations.AdministrativeGender.FEMALE
+        );
+        patient.addName().setText(patientEntity.get().getName());
+
+        patientEntity.get().getPhoneNumber()
+                        .stream()
+                                .forEach(
+                                        phonenumber -> patient.addTelecom(new ContactPoint().setSystem(ContactPoint.ContactPointSystem.PHONE).setValue(phonenumber))
+                                );
+
+        Identifier identifier = new Identifier();
+        identifier.setSystem("RRN");
+        identifier.setValue(patientEntity.get().getRRN());
+
+        patient.addIdentifier(identifier);
+        patients.add(patient);
+        return patients;
+    }
 }

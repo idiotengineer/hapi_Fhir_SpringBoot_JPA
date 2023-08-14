@@ -28,6 +28,12 @@ public class OrganizationResourceProvider implements IResourceProvider {
     public MethodOutcome createOrganization(@ResourceParam Organization organization) {
         OrganizationEntity organizationEntity = organizationService.createOrSearchByNameAndHospitalName(organization);
 
-        organizationEntity.
+        MethodOutcome methodOutcome = new MethodOutcome();
+
+        methodOutcome.setResource(organization);
+        methodOutcome.setCreated(true);
+        methodOutcome.setResponseStatusCode(201);
+
+        return methodOutcome;
     }
 }

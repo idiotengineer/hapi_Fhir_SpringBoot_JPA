@@ -1,16 +1,16 @@
 package com.example.demo.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Organization;
+import org.hl7.fhir.r4.model.Practitioner;
+import org.hl7.fhir.r4.model.PractitionerRole;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -18,6 +18,7 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
+@Builder
 public class OrganizationEntity {
 
     @Id
@@ -36,4 +37,23 @@ public class OrganizationEntity {
 
     @OneToMany(mappedBy = "commissionedOrganization") //의뢰한 진료의뢰서
     private List<ServiceRequestEntity> referralServiceRequestEntity;
+
+    public OrganizationEntity(Organization organization) {
+        this.setName(organization.getName());
+        this.setHospitalCode(hospitalCode);
+        this.setPractitionerEntityList(new ArrayList<>());
+        this.setReferralServiceRequestEntity(new ArrayList<>());
+        this.setCommissionedServiceRequestEntity(new ArrayList<>());
+    }
+
+
+    public Organization translateToOrganizationResource() {
+        Organization organization = new Organization();
+
+        organization.setName(this.name);
+        organization.addIdentifier(new Identifier().setSystem("HospitalCode").setValue(this.getHospitalCode()));
+        organization.addIdentifier(new Identifier().setSystem("ID").setValue(this.getId().toString()));
+
+        return organization;
+    }
 }

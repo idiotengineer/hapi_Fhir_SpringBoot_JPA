@@ -38,7 +38,7 @@ public class ServiceRequestEntity {
     @JoinColumn
     private PatientEntity patientEntity;
 
-    @OneToMany(mappedBy = "serviceRequestEntity")
+    @OneToMany
     private List<ConditionEntity> conditionEntityList = new ArrayList<>();
 
     // 의뢰하는 의사 정보
@@ -62,4 +62,21 @@ public class ServiceRequestEntity {
     private OrganizationEntity commissionedOrganization;
 
     private Date occurrence;
+
+    public ServiceRequestEntity(
+            PatientEntity patientEntity,
+            List<ConditionEntity> conditionEntityList,
+            PractitionerEntity referralDoctor,
+            PractitionerEntity commissionedDoctor,
+            OrganizationEntity referralOrganization,
+            OrganizationEntity commissionedOrganization
+            ) {
+        this.patientEntity = patientEntity;
+        this.conditionEntityList = conditionEntityList;
+        this.referralDoctor = referralDoctor;
+        this.commissionedDoctor = commissionedDoctor;
+        this.referralOrganization = referralOrganization;
+        this.commissionedOrganization = commissionedOrganization;
+        this.occurrence = new Date();
+    }
 }

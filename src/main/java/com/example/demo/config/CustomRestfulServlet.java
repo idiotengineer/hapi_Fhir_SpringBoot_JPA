@@ -6,9 +6,7 @@ import ca.uhn.fhir.narrative.INarrativeGenerator;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.RestfulServer;
 import ca.uhn.fhir.rest.server.interceptor.ResponseHighlighterInterceptor;
-import com.example.demo.entity.PractitionerEntity;
 import com.example.demo.resourceProvider.*;
-import com.example.demo.resourceProvider.EncounterResourceProvider;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

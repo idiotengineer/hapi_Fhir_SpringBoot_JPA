@@ -8,8 +8,6 @@ import com.example.demo.entity.OrganizationEntity;
 import com.example.demo.entity.PractitionerEntity;
 import com.example.demo.service.OrganizationService;
 import com.example.demo.service.PractitionerService;
-import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,17 +28,12 @@ public class PractitionerResourceProvider implements IResourceProvider {
 
     @Create
     public MethodOutcome createPractitioner(
-            @ResourceParam Practitioner practitioner,
-            @ResourceParam Organization organization
+            @ResourceParam Practitioner practitioner/*,
+            @ResourceParam Organization organization*/
             ) {
-        OrganizationEntity organizationEntity = organizationService.createOrSearchByNameAndHospitalName(organization);
-        PractitionerEntity practitionerEntity = new PractitionerEntity();
-
-        practitionerEntity.setName(practitionerEntity.getName());
-        practitionerEntity.setLicenseNumber(practitioner.getIdentifier().stream().filter(identifier -> "LicenseNumber".equals(identifier.getSystem())).map(Identifier::getValue).findFirst().get());
-        practitionerEntity.setOrganizationEntity(organizationEntity);
-
-        practitionerService.createPractitionerEntity(practitionerEntity);
+/*        OrganizationEntity organizationEntity = organizationService.createOrSearchByNameAndHospitalName(organization);
+        PractitionerEntity practitionerEntity = new PractitionerEntity(practitioner, organizationEntity);
+        practitionerService.createPractitionerEntity(practitionerEntity);*/
 
         MethodOutcome methodOutcome = new MethodOutcome();
         methodOutcome.setResource(practitioner);

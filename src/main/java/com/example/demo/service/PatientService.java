@@ -20,7 +20,7 @@ public class PatientService {
         PatientEntity patientEntity = new PatientEntity();
 
         // Convert HumanName to String and set it in PatientEntity
-        String name = patient.getName().get(0).getGiven().get(0).getValue();
+        String name = patient.getName().get(0).getText();
         patientEntity.setName(name);
 
         patientEntity.setGender(patient.getGender().toString());
@@ -78,5 +78,25 @@ public class PatientService {
 
     public Optional<PatientEntity> searchPatientByNameAndRRN(String name, String residentRegistrationNumber) {
         return patientEntityRepository.findPatientByNameAndRRN(name,residentRegistrationNumber);
+    }
+
+    public PatientEntity createOrSearchPatient(Patient parsedPatient) {
+        Optional<PatientEntity> searchPatientEntity = patientEntityRepository
+                .findPatientByNameAndRRN(
+                        parsedPatient
+                                .getName()
+                                .get(0)
+                                .getText(),
+                        parsedPatient
+                                .getIdentifier()
+                                .stream()
+                                .filter(identifier -> "RRN".equals(identifier.getSystem()))
+                                .map(Identifier::getValue).findFirst().get());
+
+        if (searchPatientEntity.isEmpty()) {
+            return createPatient(parsedPatient);
+        } else{
+            return searchPatientEntity.get();
+        }
     }
 }

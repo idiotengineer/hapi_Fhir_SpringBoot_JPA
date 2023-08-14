@@ -26,6 +26,8 @@ public class ConditionEntity {
     @Column(name = "condition_entity_id")
     private Long id;
 
+    private String patientCondition;
+
     @Enumerated(EnumType.STRING)
     private ConditionClinical conditionClinical;
 
@@ -36,8 +38,11 @@ public class ConditionEntity {
     private ConditionVerStatus conditionVerStatus;
 
 
-    public ConditionEntity(Condition condition, Patient patient) {
-        PatientEntity patientEntity = new PatientEntity();
-
+    public ConditionEntity(Condition condition, PatientEntity patientEntity) {
+        setConditionClinical(ConditionClinical.ACTIVE);
+        setPatient(patientEntity);
+        setConditionVerStatus(ConditionVerStatus.PROVISIONAL);
+        setConditionClinical(ConditionClinical.ACTIVE);
+        setPatientCondition(condition.getCode().getText());
     }
 }

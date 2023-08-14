@@ -37,13 +37,13 @@ public class ConditionResourceProvider implements IResourceProvider {
 
     @Create
     public MethodOutcome createCondition(
-            @ResourceParam Condition condition,
-            @ResourceParam Patient patient) {
+            @ResourceParam Condition condition/*,
+            @ResourceParam Patient patient*/) {
         ConditionEntity conditionEntity = new ConditionEntity();
-        PatientEntity patientEntity = patientService.searchPatientByNameAndRRN(patient.getName().get(0).getText(), patient.getIdentifier().stream().filter(identifier -> "RRN".equals(identifier.getSystem())).map(Identifier::getValue).findFirst().get()).get();
-
+       /* PatientEntity patientEntity = patientService.searchPatientByNameAndRRN(patient.getName().get(0).getText(), patient.getIdentifier().stream().filter(identifier -> "RRN".equals(identifier.getSystem())).map(Identifier::getValue).findFirst().get()).get();
+*/
         conditionEntity.setConditionClinical(ConditionClinical.ACTIVE);
-        conditionEntity.setPatient(patientEntity);
+//        conditionEntity.setPatient(patientEntity);
         conditionEntity.setConditionVerStatus(ConditionVerStatus.PROVISIONAL);
 
         conditionService.createConditionEntity(conditionEntity);

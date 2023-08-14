@@ -1,0 +1,102 @@
+{
+  "resourceType": "Bundle",
+  "type": "collection",
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "name": [
+          {
+            "text": "혁성"
+          }
+        ],
+        "identifier": [{
+          "system": "RRN",
+          "value": "123456"
+        }
+        ],
+        "gender": "male"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Condition",
+        "subject": {
+          "resource": {
+            "resourceType": "Patient",
+            "name": [
+              {
+                "text": "혁성"
+              }
+            ],
+            "identifier": [{
+              "system": "RRN",
+              "value": "123456"
+            }
+            ],
+            "gender": "male"
+          }
+        },
+        "code": {
+          "text": "환자는 심한 복통으로 위궤양이 의심됩니다."
+        }
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Organization",
+        "name": "Organization One",
+        "identifier" : [
+          {
+            "system": "HospitalCode",
+            "value" : "1"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Organization",
+        "name": "Organization Two",
+        "identifier" : [
+          {
+            "system": "HospitalCode",
+            "value" : "2"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Practitioner",
+        "name": [
+          {
+            "text": "Dr. Smith"
+          }
+        ],
+        "identifier" : [
+          {
+            "system": "LicenseNumber",
+            "value" : "1"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Practitioner",
+        "name": [
+          {
+            "text": "Dr. Brown"
+          }
+        ],
+        "identifier" : [
+          {
+            "system": "LicenseNumber",
+            "value" : "2"
+          }
+        ]
+      }
+    }
+  ]
+}

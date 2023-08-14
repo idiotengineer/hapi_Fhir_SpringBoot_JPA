@@ -24,16 +24,8 @@ public class OrganizationService {
 
 
         if (organizationEntityByNameAndHospitalCode.isEmpty()) {
-            OrganizationEntity organizationEntity = new OrganizationEntity();
-
-            organizationEntity.setName(organizationEntity.getName());
-            organizationEntity.setHospitalCode(hospitalCode);
-            organizationEntity.setPractitionerEntityList(new ArrayList<>());
-            organizationEntity.setReferralServiceRequestEntity(new ArrayList<>());
-            organizationEntity.setCommissionedServiceRequestEntity(new ArrayList<>());
-
-            OrganizationEntity save = organizationEntityRepository.save(organizationEntity);
-            return save;
+            OrganizationEntity organizationEntity = new OrganizationEntity(organization);
+            return organizationEntityRepository.save(organizationEntity);
         }
 
         return organizationEntityByNameAndHospitalCode.get();

@@ -6,6 +6,7 @@ import ca.uhn.fhir.rest.server.RestfulServer;
 import com.example.demo.config.CustomRestfulServlet;
 import com.example.demo.config.FhirServlet;
 import com.example.demo.resourceProvider.PatientResourceProvider;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
@@ -13,6 +14,9 @@ import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.DispatcherServlet;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 
 @SpringBootApplication
@@ -52,5 +56,13 @@ public class DemoApplication {
 	@Bean
 	public FhirContext getFhirContext() {
 		return FhirContext.forR4();
+	}
+
+	@PersistenceContext
+	private EntityManager em;
+
+	@Bean
+	public JPAQueryFactory jpaQueryFactory() {
+		return new JPAQueryFactory(em);
 	}
 }

@@ -22,9 +22,8 @@ public class CustomRestfulServlet extends RestfulServer {
     private final ConditionResourceProvider conditionResourceProvider;
     private final OrganizationResourceProvider organizationResourceProvider;
     private final ServiceRequestResourceProvider serviceRequestResourceProvider;
-
     private final PractitionerResourceProvider practitionerResourceProvider;
-
+private final CoverageResourceProvider coverageResourceProvider;
     @Override
     public boolean canStoreSearchResults() {
         return super.canStoreSearchResults();
@@ -39,13 +38,15 @@ public class CustomRestfulServlet extends RestfulServer {
             ConditionResourceProvider conditionResourceProvider,
             OrganizationResourceProvider organizationResourceProvider,
             PractitionerResourceProvider practitionerResourceProvider,
-            ServiceRequestResourceProvider serviceRequestResourceProvider) {
+            ServiceRequestResourceProvider serviceRequestResourceProvider,
+            CoverageResourceProvider coverageResourceProvider) {
         super(FhirContext.forR4());
         this.patientResourceProvider = patientResourceProvider;
         this.organizationResourceProvider = organizationResourceProvider;
         this.practitionerResourceProvider = practitionerResourceProvider;
         this.conditionResourceProvider = conditionResourceProvider;
         this.serviceRequestResourceProvider = serviceRequestResourceProvider;
+        this.coverageResourceProvider = coverageResourceProvider;
     }
 
     /**
@@ -61,6 +62,7 @@ public class CustomRestfulServlet extends RestfulServer {
         providers.add(this.practitionerResourceProvider);
         providers.add(this.organizationResourceProvider);
         providers.add(this.serviceRequestResourceProvider);
+        providers.add(this.coverageResourceProvider);
 
         setResourceProviders(providers);
 

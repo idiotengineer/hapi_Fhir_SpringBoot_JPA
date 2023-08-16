@@ -97,6 +97,18 @@
           }
         ]
       }
+    },
+    {
+      "resource" : {
+        "resourceType": "Coverage",
+        "status": "active",
+        "extension": [
+          {
+            "url": "coverage-kind",
+            "valueCode": "SelfPay"  // 여기에 원하는 kind 값을 넣습니다.
+          }
+        ]
+      }
     }
   ]
 }

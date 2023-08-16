@@ -35,6 +35,7 @@ public class ConditionEntity {
     @JoinColumn
     private PatientEntity patient;
 
+    @Enumerated(EnumType.STRING)
     private ConditionVerStatus conditionVerStatus;
 
 

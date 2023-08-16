@@ -63,13 +63,18 @@ public class ServiceRequestEntity {
 
     private Date occurrence;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn
+    private CoverageEntity coverage;
+
     public ServiceRequestEntity(
             PatientEntity patientEntity,
             List<ConditionEntity> conditionEntityList,
             PractitionerEntity referralDoctor,
             PractitionerEntity commissionedDoctor,
             OrganizationEntity referralOrganization,
-            OrganizationEntity commissionedOrganization
+            OrganizationEntity commissionedOrganization,
+            CoverageEntity coverage
             ) {
         this.patientEntity = patientEntity;
         this.conditionEntityList = conditionEntityList;
@@ -78,5 +83,6 @@ public class ServiceRequestEntity {
         this.referralOrganization = referralOrganization;
         this.commissionedOrganization = commissionedOrganization;
         this.occurrence = new Date();
+        this.coverage = coverage;
     }
 }

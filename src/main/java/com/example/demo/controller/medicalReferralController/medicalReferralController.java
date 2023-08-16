@@ -2,6 +2,7 @@ package com.example.demo.controller.medicalReferralController;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
+import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.StringParam;
 import com.example.demo.entity.*;
@@ -12,6 +13,7 @@ import com.example.demo.resourceProvider.PractitionerResourceProvider;
 import com.example.demo.service.*;
 import org.hl7.fhir.r4.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -50,13 +52,16 @@ public class medicalReferralController {
     private ConditionService conditionService;
 
     @Autowired
-    ServiceRequestService serviceRequestService;
+    private ServiceRequestService serviceRequestService;
+
+    @Autowired
+    private CoverageService coverageService;
 
     @Autowired
     FhirContext fhirContext;
 
-    @PostMapping("/medicalReferralRequest")
-    public String medicalReferralRequest(
+    @PostMapping("/medicalReferralPOSTRequest")
+    public String createMedicalReferral(
             @RequestBody String bundleString
     ) {
        /* IParser iParser = fhirContext.newJsonParser().setPrettyPrint(true);
@@ -74,7 +79,7 @@ public class medicalReferralController {
         Organization generatedOrganization2 = (Organization) organizationResourceProvider.createOrganization(organization1).getResource();
         MethodOutcome generatedPractitioner1 = practitionerResourceProvider.createPractitioner(practitioner1, organization1);
         MethodOutcome generatedPractitioner2 = practitionerResourceProvider.createPractitioner(practitioner2, organization2);*//*
-*/
+         */
         IParser iParser = fhirContext.newJsonParser().setPrettyPrint(true);
         Bundle bundle = iParser.parseResource(Bundle.class, bundleString);
 
@@ -84,7 +89,7 @@ public class medicalReferralController {
         Organization organization2 = null;
         Practitioner practitioner1 = null;
         Practitioner practitioner2 = null;
-
+        Coverage parsedCoverage = null;
         int organizationCount = 0;
         int practitionerCount = 0;
 
@@ -111,6 +116,8 @@ public class medicalReferralController {
                 } else if (practitionerCount == 2) {
                     practitioner2 = (Practitioner) resource;
                 }
+            } else if (resource instanceof Coverage) {
+                parsedCoverage = (Coverage) resource;
             }
         }
 
@@ -120,13 +127,15 @@ public class medicalReferralController {
         OrganizationEntity organizationEntity2 = organizationService.createOrSearchByNameAndHospitalName(organization2);
         PractitionerEntity practitionerEntity1 = practitionerService.createPractitionerEntity(practitioner1, organizationEntity1);
         PractitionerEntity practitionerEntity2 = practitionerService.createPractitionerEntity(practitioner2, organizationEntity2);
+        CoverageEntity coverageEntity = coverageService.CreateCoverageEntity(parsedCoverage, patientEntity);
         ServiceRequestEntity serviceRequestEntity = serviceRequestService.createServiceRequestEntity(
                 patientEntity,
                 conditionEntity,
                 organizationEntity1,
                 practitionerEntity1,
                 organizationEntity2,
-                practitionerEntity2
+                practitionerEntity2,
+                coverageEntity
         );
 
         ServiceRequest serviceRequest = new ServiceRequest();
@@ -139,8 +148,24 @@ public class medicalReferralController {
         serviceRequest.setOccurrence(new DateTimeType(serviceRequestEntity.getOccurrence()));
         serviceRequest.addIdentifier(new Identifier().setSystem("Requester Organization ID").setValue(organizationEntity1.getId().toString()));
         serviceRequest.addIdentifier(new Identifier().setSystem("Performer Organization ID").setValue(organizationEntity2.getId().toString()));
+        serviceRequest.addExtension(new Extension().setUrl("coverage-Type").setValue(new Reference(parsedCoverage)));
+
         return iParser.encodeResourceToString(serviceRequest);
     }
+
+    @GetMapping("/medicalReferralGETRequest")
+    public String readMedicalReferral(
+            @RequiredParam(name = "patientName") String patientName,
+            @RequiredParam(name = "commissionedDoctorName") String commissionedDoctorName,
+            @RequiredParam(name = "referralDoctorName") String referralDoctorName
+            ) {
+        ServiceRequest serviceRequest = serviceRequestService.readServiceRequestEntity(patientName, commissionedDoctorName, referralDoctorName);
+
+        return fhirContext.newJsonParser()
+                .setPrettyPrint(true)
+                .encodeResourceToString(serviceRequest);
+    }
+
 /*
     private Patient findOrCreatePatient(Patient patient) {
         StringParam nameParam = new StringParam(patient.getName().get(0).getText());
